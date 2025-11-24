@@ -1,0 +1,57 @@
+{% extends "home/base.html" %}
+
+{% block start %}
+<div class="post-list-container">
+    <h1>Posts</h1>
+
+    <a class="btn-create" href="{% url 'post_create' %}">New Post</a>
+
+    <form method="get" action="{% url 'post_list' %}" class="search-form">
+        <input type="text" name="q" placeholder="Search posts..." value="{{ query|default_if_none:'' }}">
+        <button type="submit">Search</button>
+    </form>
+
+    <ul class="post-list">
+        {% for post in page_obj %}
+        <li class="post-item">
+
+            {% if post.image %}
+                <img src="{{ post.image.url }}" class="post-thumb" alt="{{ post.title }}">
+            {% endif %}
+
+            <div class="post-content">
+                <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+                <span class="post-date">{{ post.created_at|date:"M d, Y" }}</span>
+
+                {% if post.published %}
+                    <span class="post-status published">[Published]</span>
+                {% else %}
+                    <span class="post-status draft">[Draft]</span>
+                {% endif %}
+
+                <p>{{ post.content|truncatechars:100 }}</p>
+            </div>
+
+        </li>
+        {% empty %}
+        {% if user.is_authenticated %}
+            <li>No posts yet. Be the first to <a href="{% url 'post_create' %}">create a post</a>!</li>
+        {% else %}
+            <li>No posts available.</li>
+        {% endif %}
+        {% endfor %}
+    </ul>
+
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+        {% endif %}
+
+        <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">Next</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

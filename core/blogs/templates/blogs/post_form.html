@@ -1,0 +1,28 @@
+{% extends "home/base.html" %}
+
+{% block start %}
+<div class="auth-container">
+    <h1>{{ action }} Post</h1>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {% for field in form %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.errors %}
+                    <ul class="error-message">
+                        {% for error in field.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        <button type="submit" class="btn-submit">{{ action }}</button>
+        <a class="btn-create" style="background-color:#6c757d;" href="{% url 'post_list' %}">Cancel</a>
+    </form>
+</div>
+{% endblock %}
